@@ -7,67 +7,56 @@ import {
   Input,
   Select,
   Button,
-  Typography,
-  Modal,
 } from 'antd';
 import { v4 as uuid } from 'uuid';
 
 import NotesTable from './TableComponent';
+import Modal from './EditModal';
+import {insertData, getData, deleteData} from './../notesApi';
 
 const Inicio = () => {
+  const { Header, Content, Footer } = Layout;
   const [objectNotes, setObjectNotes] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editRow, setEditRow] = useState([]);
-  const { Header, Content, Footer } = Layout;
+  const [tableId, setTableId] = useState(uuid());
+  const [modalId, setModalId] = useState(uuid());
+
+  const notesData = getData(); //here is getData Method call to get notes from the localStorage
 
   const onFinish = (values) => {
     const dataNotes = { key: uuid(), ...values };
-    setObjectNotes([dataNotes, ...objectNotes]);
+    insertData([dataNotes, ...notesData]);
+    //here is the table key change to force the render of the table after add a new data.
+    setTableId(uuid());
   };
+
   const deleteNotes = (sKey) => {
     const newData = [...objectNotes];
     const index = objectNotes.findIndex((nData) => nData.key === sKey);
     newData.splice(index, 1);
     setObjectNotes(newData);
+  
   };
+
   const deleteNotes2 = (sKey) => {
-    const newData = objectNotes.filter((data) => data.key !== sKey);
-    setObjectNotes(newData);
-    console.log('newData', [newData]);
+    const newData = notesData.filter((data) => data.key !== sKey);
+    deleteData(newData);
+    //here is the table key change to force the render of the table after add a new data.
+    setTableId(uuid());
   };
 
   const handleEdit = (editData) => {
     setIsModalVisible(true);
-    //editModal(editData);
     setEditRow(editData);
-    console.log('editData', editData);
-    console.log('editRow', editRow);
+    //here is key changes to force the render of the modal after every open,
+    //and see the change of the information.
+    setModalId(uuid());
   };
 
-  const editModal = () => {
-    // console.log('editData', editRow);
-
-    const { key, customerType, printerModel } = editRow;
-    return (
-      <Modal
-        title="Basic Modal"
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-      >
-        <>
-          <Form.Item label="Printer Model" name="printerModel">
-            <Input defaultValue={printerModel} />
-          </Form.Item>
-          <Form.Item label="Customer type" name="customerType">
-            <Select defaultValue={customerType}>
-              <Select.Option value="opcion1">opcion1</Select.Option>
-              <Select.Option value="opcion2">opcion2</Select.Option>
-            </Select>
-          </Form.Item>
-        </>
-      </Modal>
-    );
-  };
+  const closeModal = () => {
+    setIsModalVisible(false);
+  }
 
   const columns = [
     {
@@ -136,9 +125,8 @@ const Inicio = () => {
               </Button>
             </Form.Item>
           </Form>
-          {console.log(objectNotes)}
-          <NotesTable data={objectNotes} columns={columns} />
-          {editModal()}
+          <NotesTable data={notesData} columns={columns} key={tableId}/>
+          <Modal key={modalId} modalState={isModalVisible} dataToUpdate={editRow} closeModal={closeModal}/>
         </Content>
         <Footer style={{ textAlign: 'center' }}>
           Ant Design ©2018 Created by Ant UED
