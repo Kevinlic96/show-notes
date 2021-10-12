@@ -16,7 +16,11 @@ export const insertData = (values) => {
   localStorage.setItem('dataNotes', JSON.stringify(values));
 };
 
-export const updateData = () => {};
+export const updateData = (values) => {
+  console.log(values);
+  localStorage.removeItem('dataNotes');
+  localStorage.setItem('dataNotes', JSON.stringify(values));
+};
 
 //This function makes the action of delete data of the localStorage
 export const deleteData = (values) => {
