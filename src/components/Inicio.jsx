@@ -1,18 +1,10 @@
 import React, { useState } from 'react';
-import {
-  Layout,
-  Menu,
-  Breadcrumb,
-  Form,
-  Input,
-  Select,
-  Button,
-} from 'antd';
+import { Layout, Menu, Breadcrumb, Form, Input, Select, Button } from 'antd';
 import { v4 as uuid } from 'uuid';
 
 import NotesTable from './TableComponent';
 import Modal from './EditModal';
-import {insertData, getData, deleteData} from './../notesApi';
+import { insertData, getData, deleteData } from './../notesApi';
 
 const Inicio = () => {
   const { Header, Content, Footer } = Layout;
@@ -36,7 +28,6 @@ const Inicio = () => {
     const index = objectNotes.findIndex((nData) => nData.key === sKey);
     newData.splice(index, 1);
     setObjectNotes(newData);
-  
   };
 
   const deleteNotes2 = (sKey) => {
@@ -45,7 +36,7 @@ const Inicio = () => {
     //here is the table key change to force the render of the table after add a new data.
     setTableId(uuid());
   };
-
+  // console.log(notesData);
   const handleEdit = (editData) => {
     setIsModalVisible(true);
     setEditRow(editData);
@@ -56,7 +47,7 @@ const Inicio = () => {
 
   const closeModal = () => {
     setIsModalVisible(false);
-  }
+  };
 
   const columns = [
     {
@@ -125,8 +116,13 @@ const Inicio = () => {
               </Button>
             </Form.Item>
           </Form>
-          <NotesTable data={notesData} columns={columns} key={tableId}/>
-          <Modal key={modalId} modalState={isModalVisible} dataToUpdate={editRow} closeModal={closeModal}/>
+          <NotesTable data={notesData} columns={columns} key={tableId} />
+          <Modal
+            key={modalId}
+            modalState={isModalVisible}
+            dataToUpdate={editRow}
+            closeModal={closeModal}
+          />
         </Content>
         <Footer style={{ textAlign: 'center' }}>
           Ant Design ©2018 Created by Ant UED
